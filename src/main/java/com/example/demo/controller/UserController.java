@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.User;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,9 +13,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-public class GreetingController {
+public class UserController {
 
-    private List<User> users = new ArrayList<>(){
+    private final List<User> users = new ArrayList<>(){
         {
             add(User.builder().name("Roma").age(23).build());
             add(User.builder().name("Kate").age(18).build());
@@ -21,6 +23,18 @@ public class GreetingController {
         }
     };
 
+
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/random")
+    public User getRandomUser(){
+      return userService.createUser();
+    }
 
     @GetMapping()
     public List<User> getAll(){
@@ -63,8 +77,8 @@ public class GreetingController {
         return user;
     }
 
-    @PutMapping
-    public User deleteUser(String name){
+    @DeleteMapping("/{name}")
+    public User deleteUser(@PathVariable String name){
 
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getName().equals(name)) {
@@ -73,7 +87,7 @@ public class GreetingController {
         }
 
         throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "user name is not present in user database");
+                HttpStatus.I_AM_A_TEAPOT);
     }
 
 
